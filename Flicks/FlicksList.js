@@ -1,14 +1,13 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
-  Text,
   View,
   TextInput,
   FlatList,
-  ActivityIndicator
 } from "react-native";
 
-import FlicksMoive from "./FlicksMovie";
+import FlicksMovie from "./FlicksMovie";
 
 
 const styles = StyleSheet.create({
@@ -52,9 +51,8 @@ export default class FlicksList extends React.Component {
 
   filterSearch(text) {
     const props = this.props.screenProps;
-    let results = props.movies.filter(movie => {
-      return movie.title.indexOf(text) !== -1;
-    });
+    const results = props.movies.filter(movie => movie.title.indexOf(text) !== -1);
+
     this.setState({ moviesSearch: results });
   }
 
@@ -79,20 +77,26 @@ export default class FlicksList extends React.Component {
             ListHeaderComponent={this.renderHeader}
             refreshing={props.refreshing}
             onRefresh={props.onRefresh}
-            
-            renderItem={movieItem => {
-              return (
-                <FlicksMoive
-                  movie={movieItem.item}
-                  loadDetails={() =>
-                    this.props.screenProps.navigation.navigate("FlicksMovieDetail")
-                  }
-                />
-              );
-            }}
+            renderItem={movieItem => (
+              <FlicksMovie
+                movie={movieItem.item}
+                loadDetails={() =>
+                  this.props.navigation.navigate("FlicksMovieDetail", { movie: movieItem.item })
+                }
+              />)}
           />
         </View>
       </View>
     );
   }
 }
+
+FlicksList.propTypes = {
+  screenProps: PropTypes.shape({
+    refreshing: PropTypes.bool,
+    onRefresh: PropTypes.func,
+  }),
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }),
+};

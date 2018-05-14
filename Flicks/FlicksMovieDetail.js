@@ -1,26 +1,35 @@
 import React from "react";
-import { StyleSheet, Text, View, FlatList, Image } from "react-native";
+import PropTypes from 'prop-types';
+import { View, Image } from "react-native";
 import HTMLView from "react-native-htmlview";
 
-const styles = StyleSheet.create({});
 
-export default class FlicksMovieDetail extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const props = this.props.navigation.state.params;
-    const img = {
-      uri: "https://image.tmdb.org/t/p/w342" + this.props.movie.poster_path
-    };
-    return (
+const FlicksMovieDetail = (props) => {
+  const navigationParams = props.navigation.state.params;
+  const img = {
+    uri: "https://image.tmdb.org/t/p/w342" + navigationParams.movie.poster_path
+  };
+  return (
+    <View>
+      <Image source={img} />
       <View>
-        <Image source={img} />
-        <View>
-          <HTMLView value={props.overview} />
-        </View>
+        <HTMLView value={navigationParams.movie.overview} />
       </View>
-    );
-  }
-}
+    </View>
+  );
+};
+
+FlicksMovieDetail.propTypes = {
+  navigation: PropTypes.shape({
+    state: PropTypes.shape({
+      params: PropTypes.shape({
+        movie: PropTypes.shape({
+          poster_path: PropTypes.string,
+          overview: PropTypes.string,
+        })
+      }),
+    }),
+  })
+};
+
+export default FlicksMovieDetail;
