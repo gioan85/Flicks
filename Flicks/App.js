@@ -1,9 +1,10 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
-import FlicksList from "./FlicksList";
-import FlicksMovieDetail from "./FlicksMovieDetail"
 import { StackNavigator } from "react-navigation";
-import HTMLView from 'react-native-htmlview';
+
+import FlicksList from "./FlicksList";
+import FlicksMovieDetail from "./FlicksMovieDetail";
+
 
 const styles = StyleSheet.create({
   loading: {
@@ -14,17 +15,19 @@ const styles = StyleSheet.create({
   }
 });
 
-const api_url = "https://api.themoviedb.org/3/movie/";
-const api_key = "a07e22bc18f5cb106bfe4cc1f83ad8ed";
+const API_URL = "https://api.themoviedb.org/3/movie/";
+const API_KEY = "a07e22bc18f5cb106bfe4cc1f83ad8ed";
+
+const sleep = ms => new Promise(timeout => setTimeout(timeout, ms));
 
 const Routes = StackNavigator({
-  FlicksList: { 
+  FlicksList: {
     screen: FlicksList,
-    navigationOptions:  {
-      title:  'Welcome to Flicks',
-    } 
+    navigationOptions: {
+      title: 'Welcome to Flicks',
+    }
   },
-  FlicksMovieDetail: { 
+  FlicksMovieDetail: {
     screen: FlicksMovieDetail,
     navigationOptions: {
       title: 'Flicks details'
@@ -34,35 +37,32 @@ const Routes = StackNavigator({
 
 export default class App extends React.Component {
   constructor(props) {
-    super(props),
-      (this.state = {
-        movies: [],
-        loading: true,
-        refreshing: false
-      });
+    super(props);
+    this.state = {
+      movies: [],
+      loading: true,
+      refreshing: false
+    };
+
     this.fetchWithPage = this.fetchWithPage.bind(this);
     this._onRefresh = this._onRefresh.bind(this);
   }
 
   async componentDidMount() {
-    await this.sleep(1000);
+    await sleep(1000);
     this.fetchWithPage('now_playing');
   }
 
-  sleep(ms) {
-    return new Promise(timeout => setTimeout(timeout, ms));
-  }
-
-  async _onRefresh(){
+  async _onRefresh() {
     this.setState({ refreshing: true });
     this.fetchWithPage('top_rated');
   }
 
   async fetchWithPage(mode) {
-    const results = await fetch(`${api_url}${mode}?api_key=${api_key}`);
+    const results = await fetch(`${API_URL}${mode}?api_key=${API_KEY}`);
     const data = await results.json();
     this.movies = data.results;
-    await this.sleep(1000);
+    await sleep(1000);
 
     this.setState({
       movies: this.movies,
@@ -72,12 +72,13 @@ export default class App extends React.Component {
   }
 
   render() {
-    if (this.state.loading)
+    if (this.state.loading) {
       return (
         <View style={styles.loading}>
           <Text>loading</Text>
         </View>
       );
+    }
 
     return (
       <Routes

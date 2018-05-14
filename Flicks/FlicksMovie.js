@@ -1,14 +1,12 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   Text,
   View,
-  FlatList,
   Image,
   TouchableHighlight
 } from "react-native";
-//import GridView from "react-native-super-grid";
-//import "FlicksMovie.css"
 
 const styles = StyleSheet.create({
   itemContainer: {
@@ -43,30 +41,34 @@ const styles = StyleSheet.create({
   }
 });
 
-export default class FlicksMovie extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const movie = this.props.movie;
-    const img = {
-      uri: "https://image.tmdb.org/t/p/w342" + this.props.movie.poster_path
-    };
-    return (
-      
-        <View style={styles.itemContainer}>
-          <View style={styles.itemColLeft}><TouchableHighlight onPress={() => {this.props.loadDetails}}>
-            <Image source={img} style={styles.itemImg} /></TouchableHighlight>
-          </View>
-          <View style={styles.itemColRight}>
-            <Text style={styles.itemTitle}>{movie.title}</Text>
-            <Text style={styles.itemOverView} ellipsizeMode="tail">
-              {movie.overview}
-            </Text>
-          </View>
+const FlicksMovie = (props) => {
+  const img = {
+    uri: "https://image.tmdb.org/t/p/w342" + props.movie.poster_path
+  };
+  return (
+      <View style={styles.itemContainer} >
+        <View style={styles.itemColLeft}>
+          <TouchableHighlight onPress={props.loadDetails}>
+            <Image source={img} style={styles.itemImg} />
+          </TouchableHighlight>
         </View>
-      
-    );
-  }
-}
+        <View style={styles.itemColRight}>
+          <Text style={styles.itemTitle}>{props.movie.title}</Text>
+          <Text style={styles.itemOverView} ellipsizeMode="tail">
+            {props.movie.overview}
+          </Text>
+        </View>
+      </View>
+  );
+};
+
+FlicksMovie.propTypes = {
+  movie: PropTypes.shape({
+    poster_path: PropTypes.string,
+    title: PropTypes.string,
+    overview: PropTypes.string,
+  }),
+  loadDetails: PropTypes.func,
+};
+
+export default FlicksMovie;
